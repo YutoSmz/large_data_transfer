@@ -38,6 +38,7 @@ size_t get_file_size(const char *path);
 // main function
 int main(int argc, char *argv[]) {
     int soc;
+    ssize_t sent_file_size;
     FILE *fp;
     size_t file_size;
 
@@ -61,7 +62,9 @@ int main(int argc, char *argv[]) {
     send_header(soc, file_size);
 
 
-    if (send_file(soc, fp, file_size) == -1) {}
+    if ((sent_file_size = send_file(soc, fp, file_size)) == -1) {
+        (void) fprintf(stderr, "[ERROR] send_file()\n");
+    }
 
     fclose(fp);
     (void) close(soc);
@@ -124,10 +127,12 @@ ssize_t send_file(int soc, FILE *fp, size_t fp_size) {
                 return (-1);
             }
         } else {
-        if ( ferror(fp) )
-            (void) fprintf(stderr, "[ERROR] Error reading file: %s\n", strerror(errno));
-        else if ( feof(fp) )
-            (void) fprintf(stderr, "[ERROR] EOF found: %s\n", strerror(errno));
+            if ( ferror(fp) ) {
+                (void) fprintf(stderr, "[ERROR] Error reading file: %s\n", strerror(errno));
+                return (-1);
+            } else if ( feof(fp) ) {
+                (void) fprintf(stdout, "[INFO] EOF found\n");
+            }
         }
 
         total += sent;
