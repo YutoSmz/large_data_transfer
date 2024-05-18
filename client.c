@@ -44,6 +44,8 @@ int main(int argc, char *argv[]) {
 
     if (argc <= 2 || strcmp(argv[1], "-help") == 0 || strcmp(argv[1], "-h") == 0) {
         (void) fprintf(stderr, "[USAGE] $ ./client [server-hostname] [server-portnumber]\n");
+        (void) fprintf(stderr, "[EXAMPLE] $ ./client localhost 50000\n");
+        (void) fprintf(stderr, "[NOTE]\n    The server must be run on another terminal before the client can be run.\n");
         exit(EX_USAGE);
     }
 
